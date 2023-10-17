@@ -42,21 +42,46 @@ export const POST: RequestHandler = async ({ request }) => {
 			sourcefile: 'main.js',
 			loader: 'jsx'
 		},
-		bundle: true,
+		bundle: false,
 		minify: true,
-		jsx: 'automatic',
+		jsx: 'transform',
 		write: false
 	});
 
 	if (js.outputFiles && js.outputFiles[0]) {
 		const str = Buffer.from(js.outputFiles[0].contents).toString();
-		const index = `<html><body><div id="root"></div></body><script type="text/javascript">${str}</script></html>`;
-		console.log('build complete', index);
-		// return new Response(js.outputFiles[0].contents);
+		console.log('got buffer contents', str);
+		const index = `<html>
+      <body>
+        <div id="root"></div>
+        <script type="importmap">
+          {
+            "imports": {
+              "react": "https://esm.sh/react@18.2.0",
+              "react-dom": "https://esm.sh/react@18.2.0",
+              "react/jsx-runtime": "https://esm.sh/jsx-runtime@1.2.0"
+            }
+          }
+        </script>
+        <script type="module">${str}</script>
+      </body>
+    </html>`;
 		return new Response(index);
 	} else
 		throw error(500, {
 			message: 'Error while building',
 			data: js
 		});
+
+	// if (js.outputFiles && js.outputFiles[0]) {
+	// 	const str = Buffer.from(js.outputFiles[0].contents).toString();
+	// 	const index = `<html><body><div id="root"></div></body><script type="text/javascript">${str}</script></html>`;
+	// 	console.log('build complete', index);
+	// 	// return new Response(js.outputFiles[0].contents);
+	// 	return new Response(index);
+	// } else
+	// 	throw error(500, {
+	// 		message: 'Error while building',
+	// 		data: js
+	// 	});
 };

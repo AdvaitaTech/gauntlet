@@ -1,6 +1,6 @@
 **/dist/
-**/build/
-engine/
+/build
+/engine
 **/.env.*
 **/node_modules/**
 *.local

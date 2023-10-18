@@ -14,17 +14,28 @@ body {
 }
 
 :root {
-	--background-50: #e9edf6;
-	--background-100: #d7deef;
-	--background-200: #abbade;
-	--background-300: #8399ce;
-	--background-400: #5a78be;
-	--background-500: #3e5b9d;
-	--background-600: #2e4375;
-	--background-700: #1d2a49;
-	--background-800: #0d1321;
-	--background-900: #070b12;
-	--background-950: #030407;
+	--background-50: #f0f0f0;
+	--background-100: #e3e3e3;
+	--background-200: #c7c7c7;
+	--background-300: #ababab;
+	--background-400: #8f8f8f;
+	--background-500: #737373;
+	--background-600: #575757;
+	--background-700: #3b3b3b;
+	--background-800: #1e1e1e;
+	--background-900: #0f0f0f;
+	--background-950: #080808;
+	--secondary-50: #e7ebf8;
+	--secondary-100: #cbd4f1;
+	--secondary-200: #9bade3;
+	--secondary-300: #6783d5;
+	--secondary-400: #365ac4;
+	--secondary-500: #284290;
+	--secondary-600: #1a2b5e;
+	--secondary-700: #142148;
+	--secondary-800: #0d1630;
+	--secondary-900: #070b18;
+	--secondary-950: #03050c;
 	--primary-50: #f5f7f3;
 	--primary-100: #ebeee7;
 	--primary-200: #d5dbcc;
@@ -36,17 +47,6 @@ body {
 	--primary-800: #566246;
 	--primary-900: #2a3022;
 	--primary-950: #151811;
-	--secondary-50: #f9f1f1;
-	--secondary-100: #f3e4e2;
-	--secondary-200: #e8ccc9;
-	--secondary-300: #dcb1ad;
-	--secondary-400: #d19994;
-	--secondary-500: #c57e77;
-	--secondary-600: #ba665e;
-	--secondary-700: #a85048;
-	--secondary-800: #8e443d;
-	--secondary-900: #47221f;
-	--secondary-950: #24110f;
 	--white-50: #faf9fa;
 	--white-100: #f5f4f6;
 	--white-200: #eae9ec;

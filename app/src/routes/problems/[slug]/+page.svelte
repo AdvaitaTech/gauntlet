@@ -1,26 +1,10 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
-
-	let editorRef: HTMLDivElement;
-	let editorElement: editor.IStandaloneCodeEditor;
-
-	onMount(async () => {
-		const monaco = await import('monaco-editor/esm/vs/editor/editor.api');
-		monaco.editor.setTheme('vs-dark');
-		editorElement = monaco.editor.create(editorRef, {
-			value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-			minimap: {
-				enabled: false
-			},
-			language: 'javascript'
-		});
-	});
+	import Editor from './Editor.svelte';
 </script>
 
-<div class="h-full w-full bg-background-700 flex">
+<div class="h-full w-full bg-background-900 flex">
 	<div class="flex-1 flex flex-row">
-		<div class="w-[550px] h-full text-white-500 p-5">
+		<div class="w-[550px] h-full text-white-500 p-5 border-r border-r-background-950">
 			<h3 class="text-xl font-bold mb-10">Simple Counter</h3>
 			<div class="text-lg leading-10">
 				Build a webpage that displays a count value starting at 0. Provide 3 buttons in a row
@@ -31,9 +15,10 @@
 				is clicked", the value should go down by 1. When <code>Reset</code> is clicked, the value should
 				go back to 0
 			</div>
+			<button class="px-5 py-2 rounded-lg bg-secondary-600">Submit</button>
 		</div>
-		<div class="flex-1 bg-background-800 h-full">
-			<div bind:this={editorRef} class="w-full h-full" />
+		<div class="flex-1 bg-background-900 h-full flex flex-col">
+			<Editor className="w-full flex-1" />
 		</div>
 	</div>
 </div>

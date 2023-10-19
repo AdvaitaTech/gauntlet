@@ -38,4 +38,19 @@ describe('Users Model', () => {
 		});
 		expect(fetched.email).toBe(user.email);
 	});
+
+	it('should fetch a user by email', async () => {
+		const user = await createUser(poolClient, {
+			email: 'testing3@example.com',
+			password: 'testing@123',
+			name: 'Test User 3'
+		});
+		expect(user.email).toBe('testing3@example.com');
+		expect(user.name).toBe('Test User 3');
+		const fetched = await fetchUser(poolClient, {
+			email: user.email
+		});
+		expect(fetched.email).toBe(user.email);
+		expect(fetched.name).toBe('Test User 3');
+	});
 });

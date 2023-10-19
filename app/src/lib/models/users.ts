@@ -38,8 +38,11 @@ export const createUser = async (
 	return newUser.data;
 };
 
-export const fetchUser = async (client: PoolClient, { id }: { id: number }) => {
-	const res = await client.query<User>('SELECT id, email, name FROM users WHERE id=$1', [id]);
+export const fetchUser = async (client: PoolClient, map: { id: number } | { email: string }) => {
+	let suffix = 'id' in map ? 'id=$1' : 'email=$1';
+	const res = await client.query<User>(`SELECT id, email, name FROM users WHERE ${suffix}`, [
+		'id' in map ? map.id : map.email
+	]);
 	const user = userSchema.safeParse(res.rows[0]);
 	if (!user.success) throw new ValidationError('User validation failed');
 	return user.data;

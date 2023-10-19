@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig = {
 	projects: [
 		{
 			name: 'setup',
-			testMatch: /setup\.ts/
+			testMatch: /playwright\.setup\.ts/
 		},
 		{
 			name: 'tests',

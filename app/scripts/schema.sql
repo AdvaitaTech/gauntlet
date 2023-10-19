@@ -27,26 +27,36 @@ CREATE TABLE tests (
   CONSTRAINT    fk_challenge FOREIGN KEY(challenge_id) REFERENCES challenges(id)
 );
 
+CREATE TYPE STATUS AS ENUM ('queued', 'started', 'completed', 'failed');
+
 CREATE TABLE runs (
-  id            BIGSERIAL PRIMARY KEY,
+  id            SERIAL PRIMARY KEY,
   challenge_id  INT NOT NULL,
   user_id       INT NOT NULL,
   created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  code          TEXT NOT NULL,
+  styles        TEXT NOT NULL,
   time_taken    INT NOT NULL DEFAULT 0,
   success       BOOLEAN NOT NULL DEFAULT FALSE,
+  status        STATUS DEFAULT 'queued',
+  error         TEXT DEFAULT NULL,
   CONSTRAINT    fk_challenge FOREIGN KEY(challenge_id) REFERENCES challenges(id),
   CONSTRAINT    fk_author FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
 CREATE TABLE test_runs (
-  id            BIGSERIAL PRIMARY KEY,
+  id            SERIAL PRIMARY KEY,
   challenge_id  INT NOT NULL,
   run_id        BIGINT NOT NULL,
   user_id       INT NOT NULL,
   test_id       INT NOT NULL,
   success       BOOLEAN NOT NULL DEFAULT FALSE,
   created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   time_taken    INT NOT NULL DEFAULT 0,
+  status        STATUS DEFAULT 'queued',
+  error         TEXT DEFAULT NULL,
   CONSTRAINT    fk_challenges FOREIGN KEY(challenge_id) REFERENCES challenges(id),
   CONSTRAINT    fk_runs FOREIGN KEY(run_id) REFERENCES runs(id),
   CONSTRAINT    fk_users FOREIGN KEY(user_id) REFERENCES users(id),

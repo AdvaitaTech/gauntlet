@@ -6,7 +6,8 @@ dotenv.config();
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		include: ['src/**/*.{test,spec}.{js,ts}']
+		include: ['src/**/*.{test,spec}.{js,ts}'],
+		globalSetup: 'tests/test.setup.ts'
 	},
 	server: {
 		port: Number(process.env.PORT) || 5173

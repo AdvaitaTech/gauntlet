@@ -34,7 +34,10 @@ export const createUser = async (
 		[email, hash, name || null, now, now]
 	);
 	const newUser = userSchema.safeParse(res.rows[0]);
-	if (!newUser.success) throw new ValidationError('User validation failed');
+	if (!newUser.success) {
+		console.error(`user creation error: ${newUser.error}`);
+		throw new ValidationError('User validation failed');
+	}
 	return newUser.data;
 };
 
@@ -44,6 +47,15 @@ export const fetchUser = async (client: PoolClient, map: { id: number } | { emai
 		'id' in map ? map.id : map.email
 	]);
 	const user = userSchema.safeParse(res.rows[0]);
-	if (!user.success) throw new ValidationError('User validation failed');
+	if (!user.success) {
+		console.error(
+			'error',
+			user.error,
+			res.rows,
+			`SELECT id, email, name FROM users WHERE ${suffix}`,
+			['id' in map ? map.id : map.email]
+		);
+		throw new ValidationError('User validation failed');
+	}
 	return user.data;
 };

@@ -25,8 +25,9 @@ describe('Runs Model', () => {
 		});
 		challenge = await fetchChallenge(client, { id });
 		const user = await fetchUser(client, { email: 'testing101@example.com' });
-		userId = user.id;
-		user2 = await fetchUser(client, { email: 'testing102@example.com' });
+		userId = user!.id;
+		const u = await fetchUser(client, { email: 'testing102@example.com' });
+		if (u) user2 = u;
 	});
 	afterAll(() => {
 		client.release();
@@ -53,10 +54,14 @@ describe('Runs Model', () => {
 			error: ''
 		});
 		const run = await fetchRun(client, { id: runId });
-		// @ts-ignore
-		expect(run.id).toBe(runId);
+		expect(run?.id).toBe(runId);
 		expect(runId).not.toBeNaN();
 		expect(testRunId).not.toBeNaN();
+	});
+
+	it('should return null for incorrect run id', async () => {
+		const run = await fetchRun(client, { id: -1 });
+		expect(run).toBeNull();
 	});
 
 	it('should filter all runs of user1', async () => {

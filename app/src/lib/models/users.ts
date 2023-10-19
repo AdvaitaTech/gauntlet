@@ -46,6 +46,7 @@ export const fetchUser = async (client: PoolClient, map: { id: number } | { emai
 	const res = await client.query<User>(`SELECT id, email, name FROM users WHERE ${suffix}`, [
 		'id' in map ? map.id : map.email
 	]);
+	if (!res.rows[0]) return null;
 	const user = userSchema.safeParse(res.rows[0]);
 	if (!user.success) {
 		console.error(

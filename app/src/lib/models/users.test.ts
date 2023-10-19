@@ -22,7 +22,7 @@ describe('Users Model', () => {
 		const fetched = await fetchUser(poolClient, {
 			id: user.id
 		});
-		expect(fetched.email).toBe(user.email);
+		expect(fetched?.email).toBe(user.email);
 	});
 
 	it('should create and fetch a user without name', async () => {
@@ -36,7 +36,7 @@ describe('Users Model', () => {
 		const fetched = await fetchUser(poolClient, {
 			id: user.id
 		});
-		expect(fetched.email).toBe(user.email);
+		expect(fetched?.email).toBe(user.email);
 	});
 
 	it('should fetch a user by email', async () => {
@@ -50,7 +50,14 @@ describe('Users Model', () => {
 		const fetched = await fetchUser(poolClient, {
 			email: user.email
 		});
-		expect(fetched.email).toBe(user.email);
-		expect(fetched.name).toBe('Test User 3');
+		expect(fetched?.email).toBe(user.email);
+		expect(fetched?.name).toBe('Test User 3');
+	});
+
+	it('should fail on an incorrect fetch', async () => {
+		const user = await fetchUser(poolClient, {
+			email: 'testing0@example.com'
+		});
+		expect(user).toBeNull();
 	});
 });

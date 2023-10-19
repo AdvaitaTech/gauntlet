@@ -107,6 +107,7 @@ export const createTestRun = async (
 
 export const fetchRun = async (client: PoolClient, { id }: { id: number }) => {
 	const res = await client.query<Run>('SELECT * from runs where id=$1', [id]);
+	if (!res.rows[0]) return null;
 	return res.rows[0];
 };
 

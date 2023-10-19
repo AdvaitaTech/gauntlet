@@ -1,4 +1,6 @@
 // See https://kit.svelte.dev/docs/types#app
+import type { PoolClient } from 'pg';
+
 // for information about these interfaces
 declare global {
 	namespace App {
@@ -6,7 +8,9 @@ declare global {
 			type?: string;
 			data?: any;
 		}
-		// interface Locals {}
+		interface Locals {
+			db: PoolClient;
+		}
 		// interface PageData {}
 		// interface Platform {}
 	}

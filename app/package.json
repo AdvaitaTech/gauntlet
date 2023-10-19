@@ -11,14 +11,16 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "test:integration": "playwright test",
-    "test:unit": "vitest"
+    "test:integration": "NODE_ENV=test ./scripts/db_setup.sh gauntlet_test && playwright test",
+    "test:unit": "NODE_ENV=test ./scripts/db_setup.sh gauntlet_test && vitest --run"
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/adapter-node": "^1.3.1",
     "@sveltejs/kit": "^1.20.4",
+    "@types/bcrypt": "^5.0.1",
+    "@types/pg": "^8.10.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "autoprefixer": "^10.4.16",
@@ -40,8 +42,10 @@
   },
   "type": "module",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "esbuild": "^0.19.4",
     "monaco-editor": "^0.44.0",
+    "pg": "^8.11.3",
     "tailwindcss": "^3.3.3",
     "zod": "^3.22.4"
   }

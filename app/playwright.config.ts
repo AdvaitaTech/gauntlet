@@ -9,7 +9,16 @@ const config: PlaywrightTestConfig = {
 	},
 	fullyParallel: true,
 	testDir: 'tests',
-	testMatch: /(.+\.)?(test|spec)\.[jt]s/
+	projects: [
+		{
+			name: 'setup',
+			testMatch: /setup\.ts/
+		},
+		{
+			name: 'tests',
+			dependencies: ['setup']
+		}
+	]
 };
 
 export default config;

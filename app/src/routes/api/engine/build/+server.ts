@@ -19,7 +19,6 @@ const resolveEnvironmentsPlugin: esbuild.Plugin = {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
-	console.log('got post req', import.meta.url);
 	const schema = z.object({
 		content: z.string(),
 		language: z.enum(['typescript', 'javascript']),
@@ -58,8 +57,8 @@ export const POST: RequestHandler = async ({ request }) => {
           {
             "imports": {
               "react": "https://esm.sh/react@18.2.0",
-              "react-dom": "https://esm.sh/react@18.2.0",
-              "react/jsx-runtime": "https://esm.sh/jsx-runtime@1.2.0"
+              "react-dom/client": "https://esm.sh/react-dom@18.2.0?cjs-exports=createRoot,hydrateRoot",
+              "react/jsx-runtime": "https://esm.sh/jsx-runtime@1.2.0?cjs-exports=jsx"
             }
           }
         </script>

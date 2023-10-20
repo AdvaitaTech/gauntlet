@@ -10,6 +10,7 @@ declare global {
 		}
 		interface Locals {
 			db: PoolClient;
+			userId: number | null;
 		}
 		// interface PageData {}
 		// interface Platform {}

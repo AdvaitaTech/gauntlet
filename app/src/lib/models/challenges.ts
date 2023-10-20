@@ -1,4 +1,4 @@
-import { ValidationError } from '$lib/error';
+import { ValidationError } from '../error';
 import type { PoolClient } from 'pg';
 import { z } from 'zod';
 

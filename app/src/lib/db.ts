@@ -1,12 +1,13 @@
-import { Client, Pool } from 'pg';
+import pg from 'pg';
+const { Client, Pool } = pg;
 
 const pool = new Pool({
-	database: import.meta.env.DBNAME,
-	user: import.meta.env.DBUSER,
-	password: import.meta.env.DBPASSWORD,
-	host: import.meta.env.DBHOST,
-	port: import.meta.env.DBPORT,
-	max: import.meta.env.DBPOOLMAX
+	database: process.env.DBNAME,
+	user: process.env.DBUSER,
+	password: process.env.DBPASSWORD,
+	host: process.env.DBHOST,
+	port: Number(process.env.DBPORT),
+	max: Number(process.env.DBPOOLMAX)
 });
 
 export const getConnection = async () => await pool.connect();

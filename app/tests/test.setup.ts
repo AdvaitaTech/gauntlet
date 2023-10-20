@@ -1,5 +1,5 @@
-import { getConnection } from '$lib/db';
-import { createUser } from '$lib/models/users';
+import { getConnection } from '../src/lib/db';
+import { createUser } from '../src/lib/models/users';
 
 console.log('running test setup');
 export async function setup() {

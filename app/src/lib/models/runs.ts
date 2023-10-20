@@ -1,4 +1,4 @@
-import { getParameterizedQuery } from '$lib/db';
+import { getParameterizedQuery } from '../db';
 import type { PoolClient } from 'pg';
 
 export type Run = {

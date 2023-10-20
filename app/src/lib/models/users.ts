@@ -1,8 +1,8 @@
 import type { PoolClient } from 'pg';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
-import { ValidationError } from '$lib/error';
-import { getParameterizedQuery } from '$lib/db';
+import { ValidationError } from '../error';
+import { getParameterizedQuery } from '../db';
 
 export type User = {
 	id: number;

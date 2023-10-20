@@ -111,6 +111,46 @@ export const fetchRun = async (client: PoolClient, { id }: { id: number }) => {
 	return res.rows[0];
 };
 
+export const updateRun = async (
+	client: PoolClient,
+	id: number,
+	updates: { time_taken?: number; success?: boolean; status?: string; error?: string }
+) => {
+	const [updateQ, params] = getParameterizedQuery(
+		{ ...updates, updated_at: new Date() },
+		{
+			queryPrefix: 'SET',
+			paramOffset: 1,
+			joinString: ', '
+		}
+	);
+	const res = await client.query<Run>(`UPDATE runs ${updateQ} WHERE id=$1 RETURNING *`, [
+		id,
+		...params
+	]);
+	return res.rows[0];
+};
+
+export const updateTestRun = async (
+	client: PoolClient,
+	id: number,
+	updates: { time_taken?: number; success?: boolean; status?: string; error?: string }
+) => {
+	const [updateQ, params] = getParameterizedQuery(
+		{ ...updates, updated_at: new Date() },
+		{
+			queryPrefix: 'SET',
+			paramOffset: 1,
+			joinString: ', '
+		}
+	);
+	const res = await client.query<TestRun>(`UPDATE runs ${updateQ} WHERE id=$1 RETURNING *`, [
+		id,
+		...params
+	]);
+	return res.rows[0];
+};
+
 export const filterPopulatedRuns = async (
 	client: PoolClient,
 	props: {

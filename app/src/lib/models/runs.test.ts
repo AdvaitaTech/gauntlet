@@ -3,7 +3,14 @@ import type { PoolClient } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createChallenge, type Challenge, fetchChallenge } from './challenges';
 import { fetchUser, type User } from './users';
-import { createRun, createTestRun, fetchRun, filterPopulatedRuns } from './runs';
+import {
+	createRun,
+	createTestRun,
+	fetchRun,
+	filterPopulatedRuns,
+	updateRun,
+	updateTestRun
+} from './runs';
 
 describe('Runs Model', () => {
 	let client: PoolClient;
@@ -116,5 +123,33 @@ describe('Runs Model', () => {
 		const runs2 = await filterPopulatedRuns(client, { user_id: user2.id });
 		expect(runs2).toHaveLength(1);
 		expect(runs2[0].tests[0].id).toBe(testRunId);
+	});
+
+	it('should create and update run and test_run', async () => {
+		const runId = await createRun(client, {
+			challengeId: challenge.id,
+			userId,
+			status: 'completed',
+			success: true,
+			code: '',
+			styles: '',
+			timeTaken: 0
+		});
+		const testRunId = await createTestRun(client, {
+			challengeId: challenge.id,
+			userId,
+			runId,
+			testId: challenge.tests[0].id,
+			success: true,
+			time: 0,
+			status: 'completed',
+			error: ''
+		});
+		const run = await updateRun(client, runId, { time_taken: 1, status: 'completed' });
+		const testRun = await updateTestRun(client, testRunId, { error: 'something', success: false });
+		expect(run?.time_taken).toBe(1);
+		expect(run?.status).toBe('completed');
+		expect(testRun?.success).toBe(false);
+		expect(testRun?.error).toBe('something');
 	});
 });

@@ -8,13 +8,14 @@ export type User = {
 	id: number;
 	email: string;
 	name: string | null;
-	token: string;
+	token: string | null;
 };
 
 const userSchema = z.object({
 	id: z.number(),
 	email: z.string(),
-	name: z.string().nullable()
+	name: z.string().nullable(),
+	token: z.string().nullable()
 });
 
 export const createUser = async (

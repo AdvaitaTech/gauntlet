@@ -2,6 +2,20 @@ import { ValidationError } from '$lib/error';
 import type { PoolClient } from 'pg';
 import { z } from 'zod';
 
+export type Test = {
+	id: number;
+	challenge_id: number;
+	title: string;
+	body: string;
+};
+
+export type Challenge = {
+	id: number;
+	title: string;
+	level: string;
+	tests: Test[];
+};
+
 const testSchema = z.object({
 	id: z.number(),
 	challenge_id: z.number(),

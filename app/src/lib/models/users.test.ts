@@ -1,7 +1,7 @@
 import { getConnection } from '$lib/db';
 import type { PoolClient } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createUser, fetchUser } from './users';
+import { createUser, fetchUser, updateUser } from './users';
 
 describe('Users Model', () => {
 	let poolClient: PoolClient;
@@ -59,5 +59,11 @@ describe('Users Model', () => {
 			email: 'testing0@example.com'
 		});
 		expect(user).toBeNull();
+	});
+
+	it('should update a users details', async () => {
+		const user = await fetchUser(poolClient, { email: 'testing100@example.com' });
+		const newUser = await updateUser(poolClient, user?.id || 0, { name: 'Updated' });
+		expect(newUser?.name).toBe('Updated');
 	});
 });

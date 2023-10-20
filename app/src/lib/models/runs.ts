@@ -121,7 +121,7 @@ export const filterPopulatedRuns = async (
 		success?: boolean;
 	}
 ) => {
-	const [query, params] = getParameterizedQuery(props, { prefix: 'r' });
+	const [query, params] = getParameterizedQuery(props, { fieldPrefix: 'r' });
 	const res = await client.query<PopulatedRun>(
 		`SELECT r.*, COALESCE(json_agg(row_to_json(t)) FILTER (WHERE t.id IS NOT NULL), '[]') as tests
     FROM runs r

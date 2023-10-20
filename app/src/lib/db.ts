@@ -14,18 +14,24 @@ export const getConnection = async () => await pool.connect();
 export const getParameterizedQuery = <T extends {}>(
 	filters: T,
 	options?: {
-		prefix: string;
+		fieldPrefix?: string;
+		queryPrefix?: string;
+		paramOffset?: number;
+		joinString?: string;
 	}
 ) => {
 	let params: T[keyof T][] = [];
-	const prefix = options && options.prefix ? `${options.prefix + '.'}` : '';
+	const prefix = options && options.fieldPrefix ? `${options.fieldPrefix + '.'}` : '';
+	const queryPrefix = options && options.queryPrefix ? options.queryPrefix : 'WHERE';
+	const offset = options && options.paramOffset !== undefined ? options.paramOffset : 0;
+	const joinString = options && options.joinString ? options.joinString : ' AND ';
 	const query = Object.entries<T[keyof T]>(filters)
 		.filter(([key, value]) => value !== undefined)
 		.map(([key, value], index) => {
 			params.push(value);
-			return `${prefix + key}=$${index + 1}`;
+			return `${prefix + key}=$${index + 1 + offset}`;
 		})
-		.join(' AND ');
-	if (query !== '') return [`WHERE ${query}`, params] as const;
+		.join(joinString);
+	if (query !== '') return [`${queryPrefix} ${query}`, params] as const;
 	else return [query, params] as const;
 };

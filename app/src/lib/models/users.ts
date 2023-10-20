@@ -11,6 +11,10 @@ export type User = {
 	token: string | null;
 };
 
+type FullUser = User & {
+	password: string;
+};
+
 const userSchema = z.object({
 	id: z.number(),
 	email: z.string(),
@@ -78,4 +82,16 @@ export const updateUser = async (
 		[id, ...params]
 	);
 	return userSchema.parse(res.rows[0]);
+};
+
+export const authenticateUser = async (
+	client: PoolClient,
+	{ email, password }: { email: string; password: string }
+) => {
+	const {
+		rows: [user]
+	} = await client.query<FullUser>(`SELECT * FROM users where email=$1`, [email]);
+	const success = await bcrypt.compare(password, user.password);
+	if (success) return userSchema.parse(user);
+	else return null;
 };

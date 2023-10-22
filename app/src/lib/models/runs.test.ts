@@ -41,29 +41,28 @@ describe('Runs Model', () => {
 	});
 
 	it('should create run and test_run', async () => {
-		const runId = await createRun(client, {
+		const run = await createRun(client, {
 			challengeId: challenge.id,
 			userId,
 			status: 'completed',
 			success: true,
 			code: '',
 			styles: '',
-			timeTaken: 0
+			timeTaken: 0,
+			tests: [
+				{
+					testId: challenge.tests[0].id,
+					success: true,
+					time: 0,
+					status: 'completed',
+					error: ''
+				}
+			]
 		});
-		const testRunId = await createTestRun(client, {
-			challengeId: challenge.id,
-			userId,
-			runId,
-			testId: challenge.tests[0].id,
-			success: true,
-			time: 0,
-			status: 'completed',
-			error: ''
-		});
-		const run = await fetchRun(client, { id: runId });
-		expect(run?.id).toBe(runId);
-		expect(runId).not.toBeNaN();
-		expect(testRunId).not.toBeNaN();
+		expect(run?.challenge_id).toBe(challenge.id);
+		expect(run.id).not.toBeNaN();
+		expect(run?.tests[0].id).not.toBeNaN();
+		expect(run?.tests[0].test_id).toBe(challenge.tests[0].id);
 	});
 
 	it('should return null for incorrect run id', async () => {
@@ -72,81 +71,81 @@ describe('Runs Model', () => {
 	});
 
 	it('should filter all runs of user1', async () => {
-		const runId = await createRun(client, {
+		const run = await createRun(client, {
 			challengeId: challenge.id,
 			userId,
 			status: 'completed',
 			success: true,
 			code: '',
 			styles: '',
-			timeTaken: 0
-		});
-		const testRunId = await createTestRun(client, {
-			challengeId: challenge.id,
-			userId,
-			runId,
-			testId: challenge.tests[0].id,
-			success: true,
-			time: 0,
-			status: 'completed',
-			error: ''
+			timeTaken: 0,
+			tests: [
+				{
+					testId: challenge.tests[0].id,
+					success: true,
+					time: 0,
+					status: 'completed',
+					error: 'test2'
+				}
+			]
 		});
 		const runs = await filterPopulatedRuns(client, { user_id: userId });
 		expect(runs).toHaveLength(2);
-		const runs2 = await filterPopulatedRuns(client, { user_id: userId, id: runId });
+		const runs2 = await filterPopulatedRuns(client, { user_id: userId, id: run.id });
 		expect(runs2).toHaveLength(1);
-		expect(runs[1].tests[0].id).toBe(testRunId);
+		expect(runs[1].tests[0].error).toBe('test2');
 	});
 
 	it('should filter all runs of user2', async () => {
-		const runId = await createRun(client, {
+		const run = await createRun(client, {
 			challengeId: challenge.id,
 			userId: user2.id,
 			status: 'completed',
 			success: true,
 			code: '',
 			styles: '',
-			timeTaken: 0
-		});
-		const testRunId = await createTestRun(client, {
-			challengeId: challenge.id,
-			userId: user2.id,
-			runId,
-			testId: challenge.tests[0].id,
-			success: true,
-			time: 0,
-			status: 'completed',
-			error: ''
+			timeTaken: 0,
+			tests: [
+				{
+					testId: challenge.tests[0].id,
+					success: true,
+					time: 0,
+					status: 'completed',
+					error: ''
+				}
+			]
 		});
 		const runs = await filterPopulatedRuns(client, {});
 		expect(runs).toHaveLength(3);
 		const runs2 = await filterPopulatedRuns(client, { user_id: user2.id });
 		expect(runs2).toHaveLength(1);
-		expect(runs2[0].tests[0].id).toBe(testRunId);
+		expect(runs2[0].tests[0].id).toBe(run.tests[0].id);
 	});
 
 	it('should create and update run and test_run', async () => {
-		const runId = await createRun(client, {
+		const firstRun = await createRun(client, {
 			challengeId: challenge.id,
 			userId,
 			status: 'completed',
 			success: true,
 			code: '',
 			styles: '',
-			timeTaken: 0
+			timeTaken: 0,
+			tests: [
+				{
+					testId: challenge.tests[0].id,
+					success: true,
+					time: 0,
+					status: 'completed',
+					error: ''
+				}
+			]
 		});
-		const testRunId = await createTestRun(client, {
-			challengeId: challenge.id,
-			userId,
-			runId,
-			testId: challenge.tests[0].id,
-			success: true,
-			time: 0,
-			status: 'completed',
-			error: ''
+		const run = await updateRun(client, firstRun.id, { time_taken: 1, status: 'completed' });
+		const testRun = await updateTestRun(client, firstRun.tests[0].id, {
+			error: 'something',
+			success: false
 		});
-		const run = await updateRun(client, runId, { time_taken: 1, status: 'completed' });
-		const testRun = await updateTestRun(client, testRunId, { error: 'something', success: false });
 		expect(run?.time_taken).toBe(1);
 		expect(run?.status).toBe('completed');
 		expect(testRun?.success).toBe(false);

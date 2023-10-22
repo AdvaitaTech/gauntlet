@@ -15,6 +15,7 @@ export const actions = {
 			const email = data.get('email');
 			const password = data.get('password');
 
+			console.log('getting parse token');
 			const parsed = loginSchema.safeParse({ email, password });
 			if (!parsed.success) {
 				console.error('Error during register: Unable to parse:', parsed.error);
@@ -25,18 +26,17 @@ export const actions = {
 				password: parsed.data.password
 			});
 			if (!user) throw new AuthError('Incorrect password');
-			const token = jwt.sign(user.id.toString(), process.env.SECRET || '', {
-				expiresIn: 60 * 60 * 24 * 30
-			});
+			const token = jwt.sign(user.id.toString(), process.env.SECRET || '');
+			console.log('setting token');
 			cookies.set('token', token, {
 				path: '/',
 				httpOnly: true,
-				sameSite: 'strict',
+				// sameSite: 'strict',
 				secure: process.env.PROD ? true : false,
 				maxAge: 60 * 60 * 24 * 30
 			});
-			return redirect(303, '/explore');
 		} catch (e) {
+			console.log('catching login error', e);
 			if (e instanceof AppError) {
 				return new Response(e.message, {
 					status: e.code,
@@ -44,5 +44,6 @@ export const actions = {
 				});
 			}
 		}
+		throw redirect(303, '/');
 	}
 } satisfies Actions;

@@ -6,7 +6,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const token = event.cookies.get('token');
 	const db = await getConnection();
 	jwt;
-	const userId = token ? Number(await jwt.verify(token, process.env.SECRET || '')) : null;
+	const userId = token ? Number(jwt.verify(token, process.env.SECRET || '')) : null;
 	event.locals = { db, userId };
 	const response = await resolve(event);
 	db.release();

@@ -19,11 +19,10 @@ export type TestRun = {
 	id: number;
 	run_id: number;
 	challenge_id: number;
+	test_id: number;
 	user_id: number;
 	created_at: number;
 	updated_at: number;
-	code: string;
-	styles: string;
 	time_taken: string;
 	success: boolean;
 	status: string;
@@ -44,7 +43,8 @@ export const createRun = async (
 		styles,
 		success,
 		timeTaken,
-		error
+		error,
+		tests
 	}: {
 		challengeId: number;
 		userId: number;
@@ -54,25 +54,58 @@ export const createRun = async (
 		timeTaken: number;
 		success?: boolean;
 		error?: string;
+		tests: {
+			testId: number;
+			success: boolean;
+			time: number;
+			status: string;
+			error?: string;
+		}[];
 	}
-) => {
-	const now = new Date();
-	const res = await client.query<{ id: number }>(
-		'INSERT INTO runs(challenge_id, user_id, time_taken, code, styles, status, success, error, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
-		[
-			challengeId,
-			userId,
-			timeTaken,
-			code,
-			styles,
-			status,
-			success || false,
-			error || null,
-			now,
-			now
-		]
-	);
-	return res.rows[0].id;
+): Promise<PopulatedRun> => {
+	try {
+		const now = new Date();
+		await client.query('BEGIN');
+		const res = await client.query<Run>(
+			'INSERT INTO runs(challenge_id, user_id, time_taken, code, styles, status, success, error, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
+			[
+				challengeId,
+				userId,
+				timeTaken,
+				code,
+				styles,
+				status,
+				success || false,
+				error || null,
+				now,
+				now
+			]
+		);
+		const run = res.rows[0];
+		const testRuns = await Promise.all(
+			tests.map(({ testId, time, success, status, error }) =>
+				createTestRun(client, {
+					challengeId,
+					runId: run.id,
+					userId,
+					testId,
+					time,
+					success,
+					status,
+					error
+				})
+			)
+		);
+		await client.query('COMMIT');
+		return {
+			...run,
+			tests: testRuns
+		};
+	} catch (e) {
+		client.query('ROLLBACK');
+		console.error('error during run creation', e);
+		throw e;
+	}
 };
 
 export const createTestRun = async (
@@ -94,15 +127,15 @@ export const createTestRun = async (
 		time: number;
 		success: boolean;
 		status: string;
-		error: string;
+		error?: string;
 	}
 ) => {
 	const now = new Date();
-	const res = await client.query<{ id: number }>(
-		'INSERT INTO test_runs(challenge_id, run_id, user_id, test_id, success, time_taken, status, error, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id',
+	const res = await client.query<TestRun>(
+		'INSERT INTO test_runs(challenge_id, run_id, user_id, test_id, success, time_taken, status, error, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *',
 		[challengeId, runId, userId, testId, success, time, status, error, now, now]
 	);
-	return res.rows[0].id;
+	return res.rows[0];
 };
 
 export const fetchRun = async (client: PoolClient, { id }: { id: number }) => {

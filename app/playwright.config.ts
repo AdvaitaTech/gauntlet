@@ -1,5 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
+import dotenv from 'dotenv-flow';
 
+dotenv.config();
 const config: PlaywrightTestConfig = {
 	webServer: {
 		// command: 'NODE_ENV=test npm run build && NODE_ENV=test npm run preview',

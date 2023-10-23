@@ -3,6 +3,13 @@ import dotenv from 'dotenv-flow';
 
 dotenv.config();
 const config: PlaywrightTestConfig = {
+	expect: {
+		timeout: 500
+	},
+	use: {
+		headless: true,
+		actionTimeout: 5000
+	},
 	webServer: {
 		// command: 'NODE_ENV=test npm run build && NODE_ENV=test npm run preview',
 		command: 'NODE_ENV=test npm run dev',

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { AppError, AuthError, ValidationError } from '$lib/error';
+import { AppError, AuthError, BadDataError, ValidationError } from '$lib/error';
 import { authenticateUser, createUser } from '$lib/models/users';
 import { redirect, type Actions } from '@sveltejs/kit';
 import { z } from 'zod';
@@ -37,13 +37,21 @@ export const actions = {
 			});
 		} catch (e) {
 			console.log('catching login error', e);
-			if (e instanceof AppError) {
+			if (e instanceof BadDataError) {
+				throw redirect(303, '/login?error=BadDataError');
+			} else if (e instanceof AuthError) {
+				throw redirect(303, '/login?error=AuthError');
+			} else if (e instanceof AppError) {
 				return new Response(e.message, {
 					status: e.code,
 					statusText: e.name
 				});
-			}
+			} else
+				return new Response('Internal Server Error', {
+					status: 500,
+					statusText: 'Internal Server Error'
+				});
 		}
-		throw redirect(303, '/');
+		throw redirect(303, '/explore');
 	}
 } satisfies Actions;

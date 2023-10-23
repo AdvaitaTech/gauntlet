@@ -1,7 +1,7 @@
 import type { PoolClient } from 'pg';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
-import { ValidationError } from '../error';
+import { BadDataError, ValidationError } from '../error';
 import { getParameterizedQuery } from '../db';
 
 export type User = {
@@ -91,6 +91,7 @@ export const authenticateUser = async (
 	const {
 		rows: [user]
 	} = await client.query<FullUser>(`SELECT * FROM users where email=$1`, [email]);
+	if (!user) throw new BadDataError('No such user found');
 	const success = await bcrypt.compare(password, user.password);
 	if (success) return userSchema.parse(user);
 	else return null;

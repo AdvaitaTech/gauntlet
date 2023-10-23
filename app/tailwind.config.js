@@ -44,6 +44,7 @@ export default {
 					950: '#151811'
 				},
 				white: {
+					0: '#FFFFFF',
 					50: '#FAF9FA',
 					100: '#F5F4F6',
 					200: '#EAE9EC',

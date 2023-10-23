@@ -36,16 +36,21 @@ export const createUser = async (
 ) => {
 	const hash = await bcrypt.hash(password, 10);
 	const now = new Date();
-	const res = await client.query<User>(
-		'INSERT INTO users(email, password, name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, token',
-		[email, hash, name || null, now, now]
-	);
-	const newUser = userSchema.safeParse(res.rows[0]);
-	if (!newUser.success) {
-		console.error(`user creation error: ${newUser.error}`);
-		throw new ValidationError('User validation failed');
+	try {
+		const res = await client.query<User>(
+			'INSERT INTO users(email, password, name, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, token',
+			[email, hash, name || null, now, now]
+		);
+		const newUser = userSchema.safeParse(res.rows[0]);
+		if (!newUser.success) {
+			console.error(`user creation error: ${newUser.error}`);
+			throw new ValidationError('User validation failed');
+		}
+		return newUser.data;
+	} catch (e) {
+		if (e instanceof ValidationError) throw e;
+		else throw new BadDataError('Duplicate user found');
 	}
-	return newUser.data;
 };
 
 export const fetchUser = async (client: PoolClient, map: { id: number } | { email: string }) => {

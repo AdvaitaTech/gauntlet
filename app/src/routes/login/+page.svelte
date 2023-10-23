@@ -8,7 +8,6 @@
 
 	let error: string | null;
 	$: error = $page.url.searchParams.get('error');
-	$page.params.error;
 	$: loginDisabled = !email || !password;
 </script>
 
@@ -20,7 +19,7 @@
 			<h2 class="text-2xl text-white-0 text-center mb-2">Log in to Gauntlet</h2>
 			{#if error === 'BadDataError'}
 				<div data-testid="form-feedback" class="text-center text-red-500">
-					User does not exist. Try signing up instead?
+					User does not exist. Try creating a new account?
 				</div>
 			{:else if error === 'AuthError'}
 				<div data-testid="form-feedback" class="text-center text-red-500">

@@ -17,7 +17,7 @@ const config: PlaywrightTestConfig = {
 		stdout: 'pipe',
 		stderr: 'pipe'
 	},
-	fullyParallel: true,
+	// fullyParallel: true,
 	testDir: 'tests',
 	projects: [
 		{

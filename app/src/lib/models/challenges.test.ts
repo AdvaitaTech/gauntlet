@@ -1,7 +1,7 @@
 import { getConnection } from '$lib/db';
 import type { PoolClient } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { createChallenge, fetchChallenge } from './challenges';
+import { createChallenge, fetchChallenge, filterChallenges } from './challenges';
 
 describe('Challenges Model', () => {
 	let poolClient: PoolClient;
@@ -13,8 +13,8 @@ describe('Challenges Model', () => {
 	});
 
 	it('should create a challenge with tests', async () => {
-		const title = 'Simple Counter';
-		const level = 'easy';
+		const title = 'Test Challenge';
+		const level = 'test';
 		const tests = [
 			{
 				title: 'it should increment count',
@@ -36,8 +36,8 @@ describe('Challenges Model', () => {
 	});
 
 	it('should create a challenge with no tests', async () => {
-		const title = 'Simple Counter 2';
-		const level = 'easy';
+		const title = 'Test Challenge 2';
+		const level = 'test';
 		const id = await createChallenge(poolClient, {
 			title,
 			level,
@@ -47,5 +47,15 @@ describe('Challenges Model', () => {
 		expect(challenge.title).toBe(title);
 		expect(challenge.level).toBe(level);
 		expect(challenge.tests).toHaveLength(0);
+	});
+
+	it('should fetch all challenges', async () => {
+		const challenges = await filterChallenges(poolClient, {});
+		expect(challenges).toHaveLength(7);
+	});
+
+	it('should fetch challenges by level', async () => {
+		const challenges = await filterChallenges(poolClient, { level: 'test' });
+		expect(challenges).toHaveLength(2);
 	});
 });

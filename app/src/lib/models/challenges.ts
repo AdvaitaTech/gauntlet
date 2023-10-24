@@ -1,3 +1,4 @@
+import { getParameterizedQuery } from '$lib/db';
 import { ValidationError } from '../error';
 import type { PoolClient } from 'pg';
 import { z } from 'zod';
@@ -100,4 +101,26 @@ export const fetchChallenge = async (client: PoolClient, { id }: { id: number })
 		throw new ValidationError(`Validation Error: ${value.error}`);
 	}
 	return value.data;
+};
+
+export const filterChallenges = async (
+	client: PoolClient,
+	props: {
+		id?: number;
+		level?: string;
+		status?: string;
+		success?: boolean;
+	}
+) => {
+	const [query, params] = getParameterizedQuery(props);
+	const res = await client.query<Challenge>(
+		`SELECT c.*, COALESCE(json_agg(row_to_json(t)) FILTER (WHERE t.id IS NOT NULL), '[]') as tests
+    FROM challenges c
+    LEFT JOIN tests t ON t.challenge_id = c.id 
+    ${query}
+    GROUP BY c.id, t.challenge_id
+    `,
+		params
+	);
+	return res.rows;
 };

@@ -31,9 +31,13 @@
 			<button
 				type="submit"
 				disabled={loginDisabled}
-				class="w-full mt-10 py-3 bg-primary-800 text-white-0 font-semibold rounded-lg disabled:bg-primary-300 disabled:text-white-100"
+				class="w-full mt-4 py-3 bg-primary-800 text-white-0 font-semibold rounded-lg disabled:bg-primary-300 disabled:text-white-100"
 				>Login</button
 			>
+			<div class="mt-[40px] text-sm text-center">
+				<span>Don't have an account? </span>
+				<a href="/register" class="text-primary-800 font-bold underline"> Create one </a>
+			</div>
 		</form>
 	</div>
 </div>

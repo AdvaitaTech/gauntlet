@@ -29,6 +29,13 @@ test('should provide an auth error for invalid user', async ({ page }) => {
 	await expect(page.getByTestId('form-feedback')).toContainText('User does not exist');
 });
 
+test('should link to the register page', async ({ page }) => {
+	await page.goto('/login');
+	await page.waitForTimeout(500);
+	await page.locator('a').click();
+	await expect(page).toHaveURL('/register');
+});
+
 test('should register a user', async ({ page }) => {
 	await page.goto('/register');
 	await expect(page.locator('button[type="submit"]')).toBeDisabled();
@@ -74,4 +81,11 @@ test('should show error if passwords dont match', async ({ page }) => {
 	await page.getByLabel('Name').fill('Test 1');
 	await page.locator('button[type="submit"]').click();
 	await expect(page.getByTestId('form-feedback')).toContainText('Passwords do not match');
+});
+
+test('should link to the login page', async ({ page }) => {
+	await page.goto('/register');
+	await page.waitForTimeout(500);
+	await page.locator('a').click();
+	await expect(page).toHaveURL('/login');
 });

@@ -16,6 +16,41 @@ export async function setup() {
 			})
 		)
 	);
+	const challenges = new Array(5).fill(0);
+	await Promise.all(
+		challenges.map((_, i) =>
+			createChallenge(poolClient, {
+				title: `Simple Counter ${i + 1}`,
+				level: 'Easy',
+				tests: [
+					{
+						title: 'It should start counter at 0',
+						body: `async ({page, expect}) => {
+        await expect(page.getByText('0')).toBeVisible();
+      }`
+					},
+					{
+						title: 'It should increment counter',
+						body: `async ({page, expect}) => {
+        await page.getByText('Increment').click({
+          timeout: 1000
+        });
+        await expect(page.getByText('1')).toBeVisible();
+      }`
+					},
+					{
+						title: 'It should decrement counter',
+						body: `async ({page, expect}) => {
+        await page.getByText('Decrement').click({
+          timeout: 1000
+        });
+        await expect(page.getByText('0')).toBeVisible();
+      }`
+					}
+				]
+			})
+		)
+	);
 	poolClient.release();
 }
 

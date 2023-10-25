@@ -20,7 +20,12 @@
 					{@html challenge.body}
 				</div>
 				<div class="flex items-center text-sm">
-					<div class="px-2 py-[1px] bg-background-800 text-red-800 rounded-2xl">
+					<div
+						class="px-2 py-[1px] bg-background-800 text-red-800 rounded-2xl"
+						class:text-primary-600={challenge.level === 'Easy'}
+						class:text-foreground-700={challenge.level === 'Medium'}
+						class:text-red-800={challenge.level === 'Hard'}
+					>
 						{challenge.level}
 					</div>
 				</div>

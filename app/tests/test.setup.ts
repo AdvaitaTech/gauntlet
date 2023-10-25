@@ -31,7 +31,7 @@ export async function setup() {
 					is clicked", the value should go down by 1. When <code>Reset</code> is clicked, the value should
 					go back to 0
         `,
-				level: 'Easy',
+				level: ['Easy', 'Medium', 'Hard'][i % 3],
 				tests: [
 					{
 						title: 'It should start counter at 0',

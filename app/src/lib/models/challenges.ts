@@ -31,7 +31,7 @@ const challengeSchema = z.object({
 	title: z.string(),
 	level: z.string(),
 	slug: z.string(),
-	body: z.string().nullable(),
+	body: z.string().nullable().optional(),
 	created_at: z.date(),
 	updated_at: z.date(),
 	tests: z.array(testSchema)
@@ -56,7 +56,7 @@ export const createChallenge = async (
 	try {
 		const now = new Date();
 		await client.query('BEGIN');
-		const generatedSlug = slug || title.toLowerCase().replace(' ', '-');
+		const generatedSlug = slug || title.toLowerCase().replaceAll(' ', '-');
 		const res = await client.query(
 			'INSERT INTO challenges(title, slug, level, body, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
 			[title, generatedSlug, level, body || null, now, now]
@@ -95,15 +95,19 @@ export const createTest = async (
 	);
 };
 
-export const fetchChallenge = async (client: PoolClient, { id }: { id: number }) => {
+export const fetchChallenge = async (
+	client: PoolClient,
+	map: { id: number } | { slug: string }
+) => {
+	const suffix = 'id' in map ? 'c.id=$1' : 'c.slug=$1';
 	const res = await client.query(
-		`SELECT c.id, c.title, c.level, c.created_at, c.updated_at,
-    COALESCE(json_agg(json_build_object('id', t.id, 'title', t.title, 'body', t.body, 'challenge_id', t.challenge_id)) FILTER (WHERE t.id IS NOT NULL), '[]') as tests
+		`SELECT c.*,
+    COALESCE(json_agg(row_to_json(t)) FILTER (WHERE t.id IS NOT NULL), '[]') as tests
     FROM challenges c
     LEFT JOIN tests t ON c.id = t.challenge_id
-    WHERE c.id = $1
+    WHERE ${suffix}
     GROUP BY c.id, t.challenge_id`,
-		[id]
+		['id' in map ? map.id : map.slug]
 	);
 	const value = challengeSchema.safeParse(res.rows[0]);
 	if (!value.success) {
@@ -117,6 +121,7 @@ export const filterChallenges = async (
 	props: {
 		id?: number;
 		level?: string;
+		slug?: string;
 		status?: string;
 		success?: boolean;
 	}

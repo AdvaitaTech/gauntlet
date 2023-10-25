@@ -37,7 +37,7 @@ describe('Challenges Model', () => {
 	});
 
 	it('should create a challenge with body', async () => {
-		const title = 'Test Challenge';
+		const title = 'Test Challenge s1';
 		const level = 'test';
 		const body = '<p>Test body</p>';
 		const tests = [
@@ -74,17 +74,24 @@ describe('Challenges Model', () => {
 		});
 		const challenge = await fetchChallenge(poolClient, { id });
 		expect(challenge.title).toBe(title);
+		expect(challenge.slug).toBe('test-challenge-2');
 		expect(challenge.level).toBe(level);
 		expect(challenge.tests).toHaveLength(0);
 	});
 
 	it('should fetch all challenges', async () => {
 		const challenges = await filterChallenges(poolClient, {});
-		expect(challenges).toHaveLength(7);
+		expect(challenges).toHaveLength(8);
 	});
 
 	it('should fetch challenges by level', async () => {
 		const challenges = await filterChallenges(poolClient, { level: 'test' });
-		expect(challenges).toHaveLength(2);
+		expect(challenges).toHaveLength(3);
+	});
+
+	it('should filter by slug', async () => {
+		const challenges = await filterChallenges(poolClient, { slug: 'test-challenge-2' });
+		expect(challenges).toHaveLength(1);
+		expect(challenges[0].title).toBe('Test Challenge 2');
 	});
 });

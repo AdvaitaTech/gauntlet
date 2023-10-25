@@ -2,10 +2,7 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	const challenges = data.challenges.map((c) => ({
-		...c,
-		body: (c.body || '').slice(0, 300)
-	}));
+	const challenges = data.challenges;
 </script>
 
 <div class="bg-background-800 h-full w-full overflow-hidden py-[60px] px-10">

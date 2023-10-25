@@ -1,4 +1,4 @@
-import { getParameterizedQuery } from '$lib/db';
+import { getParameterizedQuery } from '../db';
 import { ValidationError } from '../error';
 import type { PoolClient } from 'pg';
 import { z } from 'zod';
@@ -14,7 +14,7 @@ export type Challenge = {
 	id: number;
 	title: string;
 	slug: string;
-	body?: string;
+	body?: string | null;
 	level: string;
 	tests: Test[];
 };

@@ -53,6 +53,7 @@
 		"monaco-editor": "^0.44.0",
 		"pg": "^8.11.3",
 		"playwright": "^1.39.0",
+		"sass": "^1.69.4",
 		"tailwindcss": "^3.3.3",
 		"zod": "^3.22.4"
 	}

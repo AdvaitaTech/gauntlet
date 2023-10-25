@@ -23,13 +23,16 @@ export async function setup() {
 				title: `Simple Counter ${i + 1}`,
 				slug: `simple-counter-${i + 1}`,
 				body: `
-        Build a webpage that displays a count value starting at 0. Provide 3 buttons in a row
+        <p>Build a webpage that displays a count value starting at 0. Provide 3 buttons in a row
 					underneath that say <code>Increment</code>, <code>Decrement</code> and
-					<code>Reset</code>. When the
-					<code>Increment</code> button is clicked, the value of the counter should go up by 1. When
+					<code>Reset</code>. </p>
+          <p>When the
+					<code>Increment</code> button is clicked, the value of the counter should go up by 1.</p> 
+          <p>When
 					<code>Decrement</code>
-					is clicked", the value should go down by 1. When <code>Reset</code> is clicked, the value should
-					go back to 0
+					is clicked, the value should go down by 1. </p>
+          <p>When <code>Reset</code> is clicked, the value should
+					go back to 0</p>
         `,
 				level: ['Easy', 'Medium', 'Hard'][i % 3],
 				tests: [

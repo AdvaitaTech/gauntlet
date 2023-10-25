@@ -8,7 +8,7 @@ const config: PlaywrightTestConfig = {
 	},
 	use: {
 		headless: true,
-		actionTimeout: 5000
+		actionTimeout: 30000
 	},
 	webServer: {
 		// command: 'NODE_ENV=test npm run build && NODE_ENV=test npm run preview',

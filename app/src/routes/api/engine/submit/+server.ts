@@ -74,6 +74,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 		return new Response(JSON.stringify(run));
 	} catch (e) {
+		console.log('error while submitting', e);
 		if (e instanceof AppError) {
 			return new Response(e.message, {
 				status: e.code,

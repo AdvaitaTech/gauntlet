@@ -314,10 +314,26 @@
 
 		console.log('urls are', editorWorkerUrl, monaco.languages, monaco.default);
 		monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
+		monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+			diagnosticCodesToIgnore: [6133, 2792]
+		});
 		monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
+		monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+			diagnosticCodesToIgnore: [6133, 2792]
+		});
+
+		const defaultCode = `import React from "react";
+import { createRoot } from "react-dom/client;"
+
+function Component() {
+  return <div>Hello World</div>
+}
+
+createRoot(document.getElementById("root")).render(<Component />);
+  `;
 
 		editorElement = monaco.editor.create(editorRef, {
-			value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+			model: monaco.editor.createModel(defaultCode, 'typescript', monaco.Uri.file('/main.jsx')),
 			minimap: {
 				enabled: false
 			},
@@ -348,9 +364,4 @@
 	</button>
 	<button class="px-5 py-1 bg-primary-700 text-white-500 text-lg rounded-xl mr-5"> Submit </button>
 </div>
-<div bind:this={editorRef} class={className} />
-<!-- <div class="h-[20px] flex justify-end text-white-500 text-xs"> -->
-<!-- 	<button class="border-l border-l-background-950 px-8"> React </button> -->
-<!-- 	<button class="border-l border-l-background-950 px-8"> Typescript </button> -->
-<!-- 	<button class="border-l border-l-background-950" /> -->
-<!-- </div> -->
+<div id="code-editor" bind:this={editorRef} class={className} />

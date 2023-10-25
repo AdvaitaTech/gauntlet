@@ -4,6 +4,7 @@ CREATE TABLE users (
 	password      VARCHAR(200) NOT NULL,
   token         VARCHAR(100) DEFAULT NULL,
   name          VARCHAR(300) DEFAULT NULL,
+  role          VARCHAR(50) DEFAULT NULL,
   created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	UNIQUE (email)
@@ -11,7 +12,9 @@ CREATE TABLE users (
 
 CREATE TABLE challenges (
 	id            SERIAL PRIMARY KEY,
+  slug          VARCHAR(100) NOT NULL,
   title         VARCHAR(200) NOT NULL,
+  body          TEXT DEFAULT NULL,
   level         VARCHAR(100) NOT NULL,
   created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -28,6 +31,13 @@ CREATE TABLE tests (
 );
 
 CREATE TYPE STATUS AS ENUM ('queued', 'started', 'completed', 'failed');
+
+CREATE TABLE challenge_status(
+  id            SERIAL PRIMARY KEY,
+  user_id       INT NOT NULL,
+  challenge_id  INT NOT NULL,
+  status        VARCHAR(100) NOT NULL
+);
 
 CREATE TABLE runs (
   id            SERIAL PRIMARY KEY,

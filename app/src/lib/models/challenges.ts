@@ -13,6 +13,8 @@ export type Test = {
 export type Challenge = {
 	id: number;
 	title: string;
+	slug: string;
+	body?: string;
 	level: string;
 	tests: Test[];
 };
@@ -28,6 +30,8 @@ const challengeSchema = z.object({
 	id: z.number(),
 	title: z.string(),
 	level: z.string(),
+	slug: z.string(),
+	body: z.string().nullable(),
 	created_at: z.date(),
 	updated_at: z.date(),
 	tests: z.array(testSchema)
@@ -38,19 +42,24 @@ export const createChallenge = async (
 	{
 		title,
 		level,
+		slug,
+		body,
 		tests
 	}: {
 		title: string;
 		level: string;
+		slug?: string;
+		body?: string;
 		tests: { title: string; body: string }[];
 	}
 ) => {
 	try {
 		const now = new Date();
 		await client.query('BEGIN');
+		const generatedSlug = slug || title.toLowerCase().replace(' ', '-');
 		const res = await client.query(
-			'INSERT INTO challenges(title, level, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING id',
-			[title, level, now, now]
+			'INSERT INTO challenges(title, slug, level, body, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+			[title, generatedSlug, level, body || null, now, now]
 		);
 		const challengeId = res.rows[0].id;
 		await Promise.all(

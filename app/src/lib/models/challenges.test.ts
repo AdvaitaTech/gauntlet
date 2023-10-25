@@ -28,7 +28,36 @@ describe('Challenges Model', () => {
 		});
 		const challenge = await fetchChallenge(poolClient, { id });
 		expect(challenge.title).toBe(title);
+		expect(challenge.slug).toBe('test-challenge');
 		expect(challenge.level).toBe(level);
+		expect(challenge.tests).toHaveLength(1);
+		expect(challenge.tests[0].challenge_id).toBe(id);
+		expect(challenge.tests[0].title).toBe(tests[0].title);
+		expect(challenge.tests[0].body).toBe(tests[0].body);
+	});
+
+	it('should create a challenge with body', async () => {
+		const title = 'Test Challenge';
+		const level = 'test';
+		const body = '<p>Test body</p>';
+		const tests = [
+			{
+				title: 'it should increment count',
+				body: 'expect(5).toBe(5)'
+			}
+		];
+		const id = await createChallenge(poolClient, {
+			title,
+			level,
+			slug: 's1',
+			body,
+			tests
+		});
+		const challenge = await fetchChallenge(poolClient, { id });
+		expect(challenge.title).toBe(title);
+		expect(challenge.slug).toBe('s1');
+		expect(challenge.level).toBe(level);
+		expect(challenge.body).toBe(body);
 		expect(challenge.tests).toHaveLength(1);
 		expect(challenge.tests[0].challenge_id).toBe(id);
 		expect(challenge.tests[0].title).toBe(tests[0].title);

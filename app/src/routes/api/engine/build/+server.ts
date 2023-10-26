@@ -1,7 +1,7 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
-import path from 'node:path';
 import esbuild from 'esbuild';
 import { z } from 'zod';
+import * as importMap from 'esbuild-plugin-import-map';
 
 export const GET: RequestHandler = () => {
 	return new Response('pong');
@@ -10,7 +10,6 @@ export const GET: RequestHandler = () => {
 const resolveEnvironmentsPlugin: esbuild.Plugin = {
 	name: 'resolve-env',
 	setup(build) {
-		console.log('plugin on');
 		build.onResolve({ filter: new RegExp('.*') }, (args) => {
 			console.log('got all args', args);
 			return {};
@@ -34,15 +33,25 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 	}
 
+	importMap.load({
+		imports: {
+			react: 'https://esm.sh/react@18.2.0',
+			'react-dom/client': 'https://esm.sh/react-dom@18.2.0?cjs-exports=createRoot,hydrateRoot',
+			'react/jsx-runtime': 'https://esm.sh/jsx-runtime@1.2.0?cjs-exports=jsx'
+		}
+	});
+
 	const js = await esbuild.build({
 		stdin: {
 			contents: result.data.content,
-			resolveDir: '../environments/react/',
+			// resolveDir: '../environments/react/',
 			sourcefile: 'main.js',
 			loader: 'jsx'
 		},
-		bundle: false,
+		bundle: true,
 		minify: true,
+		format: 'esm',
+		plugins: [importMap.plugin()],
 		jsx: 'transform',
 		write: false
 	});
@@ -51,17 +60,10 @@ export const POST: RequestHandler = async ({ request }) => {
 		const str = Buffer.from(js.outputFiles[0].contents).toString();
 		console.log('got buffer contents', str);
 		const index = `<html>
+    <head>
+    </head>
       <body>
         <div id="root"></div>
-        <script type="importmap">
-          {
-            "imports": {
-              "react": "https://esm.sh/react@18.2.0",
-              "react-dom/client": "https://esm.sh/react-dom@18.2.0?cjs-exports=createRoot,hydrateRoot",
-              "react/jsx-runtime": "https://esm.sh/jsx-runtime@1.2.0?cjs-exports=jsx"
-            }
-          }
-        </script>
         <script type="module">${str}</script>
       </body>
     </html>`;

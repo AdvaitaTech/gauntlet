@@ -13,9 +13,12 @@ test.beforeEach(async ({ page }) => {
 
 test('should show the challenges page with code and styles', async ({ page }) => {
 	await expect(page.locator('div:text-matches("Build a webpage")')).toBeVisible();
-	await expect(page.locator('span:text-matches("import React from")')).toBeVisible();
+	await expect(page.locator('#code-editor > div')).toHaveAttribute('data-uri', 'file:///main.jsx');
 	await page.getByText('Styles').click();
-	await expect(page.locator('div:text-matches("import React from")')).not.toBeVisible();
+	await expect(page.locator('#code-editor > div')).toHaveAttribute(
+		'data-uri',
+		'file:///styles.css'
+	);
 });
 
 test('should show the runs tab', async ({ page }) => {
@@ -23,4 +26,19 @@ test('should show the runs tab', async ({ page }) => {
 	await expect(page.locator('div:text-matches("Build a webpage")')).not.toBeVisible();
 	await page.getByText('Description').click();
 	await expect(page.locator('div:text-matches("Build a webpage")')).toBeVisible();
+});
+
+test.only('should preview the code and close previewer', async ({ page }) => {
+	await page.waitForTimeout(1000);
+	const value = page.frameLocator('iframe#preview-frame').locator('body');
+	expect(value).not.toBeVisible();
+	await page.locator('#preview-code').click();
+	await page.waitForTimeout(2000);
+	await expect(page.frameLocator('#preview-frame').locator('body')).toBeVisible();
+	await expect(
+		page.frameLocator('#preview-frame').locator('div:text-matches("Hello World")')
+	).toBeVisible();
+	await page.waitForTimeout(1000);
+	await page.locator('#close-preview').click();
+	await expect(page.frameLocator('#preview-frame').locator('body')).not.toBeVisible();
 });

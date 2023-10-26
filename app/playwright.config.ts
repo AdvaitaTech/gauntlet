@@ -7,7 +7,7 @@ const config: PlaywrightTestConfig = {
 		timeout: 500
 	},
 	use: {
-		headless: true,
+		headless: false,
 		actionTimeout: 30000
 	},
 	webServer: {

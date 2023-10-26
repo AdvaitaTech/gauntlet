@@ -13,7 +13,7 @@
 	<div class="h-[50px] text-white-500 flex items-center">
 		{#each tabs as { title }, index}
 			<button
-				class="h-full px-10 flex items-center border-r border-r-primary-950 bg-background-800"
+				class="h-full px-10 flex items-center justify-center border-r border-r-primary-950 bg-background-800 flex-1"
 				class:border-b-2={currentTabIndex === index}
 				class:border-b-primary-800={currentTabIndex === index}
 				on:click={() => (currentTabIndex = index)}

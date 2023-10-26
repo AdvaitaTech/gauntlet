@@ -2,8 +2,34 @@
 	import { onMount } from 'svelte';
 	import PlayFill from 'svelte-bootstrap-icons/lib/Play.svelte';
 	import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
-
 	export let className: string;
+	const tabs = [
+		{ key: 'code', title: 'Code' },
+		{ key: 'styles', title: 'Styles' }
+	];
+	let currentTabIndex = 0;
+	let previewIndex: string | null = null;
+	let isPreviewing: boolean = false;
+	let onPreviewClose = () => {
+		isPreviewing = false;
+	};
+	let code = `import React from "react";
+import { createRoot } from "react-dom/client";
+
+function Component() {
+  return <div>Hello World</div>
+}
+createRoot(document.getElementById("root")).render(<Component />);
+  `;
+	let styles = `/* Your css goes here */`;
+	let codeModel: editor.ITextModel;
+	let stylesModel: editor.ITextModel;
+	let changeTab = (tabName: 'code' | 'styles') => {
+		return;
+	};
+	let previewCode = () => {
+		return;
+	};
 
 	let editorRef: HTMLDivElement;
 	let editorElement: editor.IStandaloneCodeEditor;
@@ -12,6 +38,7 @@
 	import cssWorkerUrl from 'monaco-editor/esm/vs/language/css/css.worker?worker&url';
 	import htmlWorkerUrl from 'monaco-editor/esm/vs/language/html/html.worker?worker&url';
 	import tsWorkerUrl from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker&url';
+	import Previewer from './Previewer.svelte';
 
 	onMount(async () => {
 		const monaco = await import('monaco-editor');
@@ -322,46 +349,81 @@
 			diagnosticCodesToIgnore: [6133, 2792]
 		});
 
-		const defaultCode = `import React from "react";
-import { createRoot } from "react-dom/client;"
-
-function Component() {
-  return <div>Hello World</div>
-}
-
-createRoot(document.getElementById("root")).render(<Component />);
-  `;
+		codeModel =
+			codeModel || monaco.editor.createModel(code, 'typescript', monaco.Uri.file('/main.jsx'));
+		stylesModel =
+			stylesModel || monaco.editor.createModel(styles, 'css', monaco.Uri.file('/styles.css'));
 
 		editorElement = monaco.editor.create(editorRef, {
-			model: monaco.editor.createModel(defaultCode, 'typescript', monaco.Uri.file('/main.jsx')),
+			model: codeModel,
 			minimap: {
 				enabled: false
 			},
 			language: 'typescript'
 		});
+
+		changeTab = (tabName: 'code' | 'styles') => {
+			console.log('switching', tabName, currentTabIndex);
+			if (currentTabIndex === 0) {
+				if (tabName === 'code') return;
+				currentTabIndex = 1;
+				editorElement.setModel(stylesModel);
+			} else {
+				if (tabName === 'styles') return;
+				currentTabIndex = 0;
+				editorElement.setModel(codeModel);
+			}
+		};
+
+		previewCode = async () => {
+			previewIndex = null;
+			isPreviewing = true;
+			const [code, styles] = monaco.editor.getModels().map((m) => m.getValue());
+			if (!code || !styles) return;
+			console.log('models', code, styles);
+			const res = await fetch('/api/engine/build', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					content: code,
+					language: 'javascript',
+					environment: 'react'
+				}),
+				credentials: 'same-origin'
+			});
+			console.log('got res', res.status, res.statusText);
+			const val = await res.text();
+			console.log('index', val);
+			previewIndex = val;
+		};
 	});
 </script>
 
 <div class="h-[50px] text-white-500 flex items-center">
-	<button
-		class="h-full px-10 border-b-primary-800 border-b-2 flex items-center border-r border-r-primary-950 bg-background-800"
-	>
-		Code
-	</button>
-	<button
-		class="h-full px-10 flex items-center border-b-2 border-b-transparent border-r border-r-primary-950"
-	>
-		Styles
-	</button>
+	{#each tabs as { title }, index}
+		<button
+			class="h-full px-10 flex items-center border-r border-r-primary-950 bg-background-800"
+			class:border-b-2={currentTabIndex === index}
+			class:border-b-primary-800={currentTabIndex === index}
+			on:click={() => {
+				changeTab(index === 0 ? 'code' : 'styles');
+			}}
+		>
+			{title}
+		</button>
+	{/each}
 	<button class="mr-5 ml-auto px-[6px] py-[1px] text-sm bg-primary-900 rounded-lg">
 		Environment: React
 	</button>
 	<button class="mr-4 px-[7px] py-[1px] text-sm bg-primary-900 rounded-lg">
 		Language: Typescript
 	</button>
-	<button class="text-[40px] text-primary-600 mr-2">
+	<button id="preview-code" class="text-[40px] text-primary-600 mr-2" on:click={previewCode}>
 		<PlayFill height="1em" width="1em" />
 	</button>
 	<button class="px-5 py-1 bg-primary-700 text-white-500 text-lg rounded-xl mr-5"> Submit </button>
 </div>
 <div id="code-editor" bind:this={editorRef} class={className} />
+<Previewer {isPreviewing} {previewIndex} {onPreviewClose} />

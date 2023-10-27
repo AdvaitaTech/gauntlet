@@ -1,12 +1,17 @@
 <script lang="ts">
 	import type { Challenge } from '$lib/models/challenges';
+	import type { PopulatedRun } from '$lib/models/runs';
 	import ChallengeDescription from './ChallengeDescription.svelte';
+	import SubmissionsTab from './SubmissionsTab.svelte';
 	const tabs = [
 		{ key: 'description', title: 'Description' },
 		{ key: 'submissions', title: 'Your Submissions' }
 	];
 	export let challenge: Challenge;
-	let currentTabIndex = 0;
+	export let runs: PopulatedRun[];
+	console.log('got runs in challenge panel', runs);
+	export let currentTabIndex: number;
+	export let setTabIndex: (index: number) => void;
 </script>
 
 <div class="w-full h-full overflow-hidden">
@@ -16,7 +21,7 @@
 				class="h-full px-10 flex items-center justify-center border-r border-r-primary-950 bg-background-800 flex-1"
 				class:border-b-2={currentTabIndex === index}
 				class:border-b-primary-800={currentTabIndex === index}
-				on:click={() => (currentTabIndex = index)}
+				on:click={() => setTabIndex(index)}
 			>
 				{title}
 			</button>
@@ -26,7 +31,7 @@
 		{#if currentTabIndex === 0}
 			<ChallengeDescription title={challenge.title} body={challenge.body || ''} />
 		{:else if currentTabIndex === 1}
-			<div>Runs come here</div>
+			<SubmissionsTab {runs} />
 		{:else}
 			<div>Some error occurred. Try refreshing the page</div>
 		{/if}

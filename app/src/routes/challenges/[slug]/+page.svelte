@@ -3,15 +3,24 @@
 	import type { PageData } from './$types';
 	import Editor from './Editor.svelte';
 	export let data: PageData;
+	let leftTabIndex = 0;
+	const setLeftTabIndex = (index: number) => {
+		leftTabIndex = index;
+	};
 </script>
 
 <div class="h-full w-full bg-background-900 flex">
 	<div class="flex-1 flex flex-row">
 		<div class="w-[550px] h-full text-white-500 border-r border-r-background-950">
-			<ChallengePanel challenge={data.challenge} />
+			<ChallengePanel
+				challenge={data.challenge}
+				runs={data.runs}
+				currentTabIndex={leftTabIndex}
+				setTabIndex={setLeftTabIndex}
+			/>
 		</div>
 		<div class="flex-1 bg-background-900 h-full flex flex-col">
-			<Editor className="w-full flex-1" />
+			<Editor className="w-full flex-1" {setLeftTabIndex} challengeId={data.challenge.id} />
 		</div>
 	</div>
 </div>

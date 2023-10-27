@@ -3,6 +3,8 @@
 	import PlayFill from 'svelte-bootstrap-icons/lib/Play.svelte';
 	import type { editor } from 'monaco-editor/esm/vs/editor/editor.api';
 	export let className: string;
+	export let setLeftTabIndex: (index: number) => void;
+	export let challengeId: number;
 	const tabs = [
 		{ key: 'code', title: 'Code' },
 		{ key: 'styles', title: 'Styles' }
@@ -10,6 +12,7 @@
 	let currentTabIndex = 0;
 	let previewIndex: string | null = null;
 	let isPreviewing: boolean = false;
+	let isSubmitting: boolean = false;
 	let onPreviewClose = () => {
 		isPreviewing = false;
 	};
@@ -30,6 +33,9 @@ createRoot(document.getElementById("root")).render(<Component />);
 	let previewCode = () => {
 		return;
 	};
+	let submitCode = () => {
+		return;
+	};
 
 	let editorRef: HTMLDivElement;
 	let editorElement: editor.IStandaloneCodeEditor;
@@ -39,6 +45,9 @@ createRoot(document.getElementById("root")).render(<Component />);
 	import htmlWorkerUrl from 'monaco-editor/esm/vs/language/html/html.worker?worker&url';
 	import tsWorkerUrl from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker&url';
 	import Previewer from './Previewer.svelte';
+	import { page } from '$app/stores';
+	import { invalidate } from '$app/navigation';
+	import { ArrowClockwise } from 'svelte-bootstrap-icons';
 
 	onMount(async () => {
 		const monaco = await import('monaco-editor');
@@ -398,6 +407,30 @@ createRoot(document.getElementById("root")).render(<Component />);
 			console.log('index', val);
 			previewIndex = val;
 		};
+		submitCode = async () => {
+			const [code, styles] = monaco.editor.getModels().map((m) => m.getValue());
+			if (!code || !styles) return;
+			isSubmitting = true;
+			console.log('submitting code');
+			const res = await fetch('/api/engine/submit', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					content: code,
+					styles,
+					challengeId,
+					language: 'javascript',
+					environment: 'react'
+				})
+			});
+			console.log('submitted code', res.status, res.statusText);
+			console.log('got run status', await res.json());
+			isSubmitting = false;
+			invalidate('runs:load');
+			setLeftTabIndex(1);
+		};
 	});
 </script>
 
@@ -423,7 +456,18 @@ createRoot(document.getElementById("root")).render(<Component />);
 	<button id="preview-code" class="text-[40px] text-primary-600 mr-2" on:click={previewCode}>
 		<PlayFill height="1em" width="1em" />
 	</button>
-	<button class="px-5 py-1 bg-primary-700 text-white-500 text-lg rounded-xl mr-5"> Submit </button>
+	<button
+		id="submit-code"
+		class="px-5 py-1 bg-primary-700 text-white-500 text-lg rounded-xl mr-5 disabled:bg-primary-900"
+		disabled={isSubmitting}
+		on:click={submitCode}
+	>
+		{#if isSubmitting}
+			<ArrowClockwise height="1em" width="1em" class="animate-spin" />
+		{:else}
+			Submit
+		{/if}
+	</button>
 </div>
 <div id="code-editor" bind:this={editorRef} class={className} />
 <Previewer {isPreviewing} {previewIndex} {onPreviewClose} />

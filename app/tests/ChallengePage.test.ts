@@ -23,12 +23,12 @@ test('should show the challenges page with code and styles', async ({ page }) =>
 
 test('should show the runs tab', async ({ page }) => {
 	await page.getByText('Your Submissions').click();
-	await expect(page.locator('div:text-matches("Build a webpage")')).not.toBeVisible();
+	await expect(page.locator('div:text-matches("No submissions yet")')).toBeVisible();
 	await page.getByText('Description').click();
 	await expect(page.locator('div:text-matches("Build a webpage")')).toBeVisible();
 });
 
-test.only('should preview the code and close previewer', async ({ page }) => {
+test('should preview the code and close previewer', async ({ page }) => {
 	await page.waitForTimeout(1000);
 	const value = page.frameLocator('iframe#preview-frame').locator('body');
 	expect(value).not.toBeVisible();
@@ -41,4 +41,30 @@ test.only('should preview the code and close previewer', async ({ page }) => {
 	await page.waitForTimeout(1000);
 	await page.locator('#close-preview').click();
 	await expect(page.frameLocator('#preview-frame').locator('body')).not.toBeVisible();
+});
+
+test.only('should submit successful challenge run', async ({ page }) => {
+	await page.waitForTimeout(1000);
+	await page.locator('#code-editor .view-lines').click();
+	await page.locator('#code-editor .view-lines').press('Meta+a');
+	await page.locator('#code-editor .view-lines').pressSequentially(`
+        import React, {useState} from 'react';
+        import { createRoot } from 'react-dom/client';
+
+        const Component = () => {
+          const [count, setCount] = useState(0);
+
+          return (<div>
+            <div>{count}</div>
+            <button onClick={() => setCount(count + 1)}>Increment</button>
+            <button onClick={() => setCount(count - 1)}>Decrement</button>
+          </div>)
+        }
+
+        const dom = document.getElementById("root");
+        const root = createRoot(dom);
+        root.render(<Component />);
+    `);
+	await page.locator('#submit-code').click();
+	await expect(page.locator('#runs-table')).toBeVisible();
 });

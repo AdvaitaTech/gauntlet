@@ -1,88 +1,48 @@
 import { error, type RequestHandler } from '@sveltejs/kit';
-import esbuild from 'esbuild';
 import { z } from 'zod';
-import * as importMap from 'esbuild-plugin-import-map';
+import { buildFrontend } from '$lib/server/engine';
+import { AppError } from '$lib/error';
 
 export const GET: RequestHandler = () => {
 	return new Response('pong');
 };
 
-const resolveEnvironmentsPlugin: esbuild.Plugin = {
-	name: 'resolve-env',
-	setup(build) {
-		build.onResolve({ filter: new RegExp('.*') }, (args) => {
-			console.log('got all args', args);
-			return {};
-		});
-	}
-};
-
 export const POST: RequestHandler = async ({ request }) => {
-	const schema = z.object({
-		content: z.string(),
-		language: z.enum(['typescript', 'javascript']),
-		environment: z.enum(['react'])
-	});
-	const json = await request.json();
-	const result = schema.safeParse(json);
-	if (!result.success) {
-		console.log('validation fail', result.error.issues);
-		throw error(400, {
-			message: 'Validation failed',
-			data: result.error.issues
+	try {
+		const schema = z.object({
+			content: z.string(),
+			styles: z.string(),
+			language: z.enum(['typescript', 'javascript']),
+			environment: z.enum(['react'])
 		});
-	}
-
-	importMap.load({
-		imports: {
-			react: 'https://esm.sh/react@18.2.0',
-			'react-dom/client': 'https://esm.sh/react-dom@18.2.0?cjs-exports=createRoot,hydrateRoot',
-			'react/jsx-runtime': 'https://esm.sh/jsx-runtime@1.2.0?cjs-exports=jsx'
+		const json = await request.json();
+		const result = schema.safeParse(json);
+		if (!result.success) {
+			console.log('validation fail', result.error.issues);
+			throw error(400, {
+				message: 'Validation failed',
+				data: result.error.issues
+			});
 		}
-	});
 
-	const js = await esbuild.build({
-		stdin: {
-			contents: result.data.content,
-			// resolveDir: '../environments/react/',
-			sourcefile: 'main.js',
-			loader: 'jsx'
-		},
-		bundle: true,
-		minify: true,
-		format: 'esm',
-		plugins: [importMap.plugin()],
-		jsx: 'transform',
-		write: false
-	});
-
-	if (js.outputFiles && js.outputFiles[0]) {
-		const str = Buffer.from(js.outputFiles[0].contents).toString();
-		console.log('got buffer contents', str);
-		const index = `<html>
-    <head>
-    </head>
-      <body>
-        <div id="root"></div>
-        <script type="module">${str}</script>
-      </body>
-    </html>`;
-		return new Response(index);
-	} else
-		throw error(500, {
-			message: 'Error while building',
-			data: js
+		const index = await buildFrontend({
+			content: result.data.content,
+			styles: result.data.styles,
+			language: result.data.language,
+			environment: result.data.environment
 		});
-
-	// if (js.outputFiles && js.outputFiles[0]) {
-	// 	const str = Buffer.from(js.outputFiles[0].contents).toString();
-	// 	const index = `<html><body><div id="root"></div></body><script type="text/javascript">${str}</script></html>`;
-	// 	console.log('build complete', index);
-	// 	// return new Response(js.outputFiles[0].contents);
-	// 	return new Response(index);
-	// } else
-	// 	throw error(500, {
-	// 		message: 'Error while building',
-	// 		data: js
-	// 	});
+		return new Response(index);
+	} catch (e) {
+		console.log('error while building', e);
+		if (e instanceof AppError) {
+			return new Response(e.message, {
+				status: e.code,
+				statusText: e.name
+			});
+		} else
+			return new Response('Internal Server Error', {
+				status: 500,
+				statusText: 'Internal Server Error'
+			});
+	}
 };

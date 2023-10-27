@@ -50,10 +50,10 @@
 				<!-- <div role="rowgroup" class="flex border-b-2 border-background-600"> -->
 				<div
 					role="cell"
-					class="px-2 py-1 border-r border-background-600 text-left text-white-800 border-b border-b-background-400"
+					class="px-2 py-1 border-r border-background-600 text-left border-b border-b-background-400"
 					class:text-red-600={run.statusDisplay === 'Runtime Error' ||
 						run.statusDisplay === 'Failed'}
-					class:text-primary-500={run.statusDisplay === 'Accepted'}
+					class:text-primary-600={run.statusDisplay === 'Accepted'}
 				>
 					{run.statusDisplay}
 				</div>

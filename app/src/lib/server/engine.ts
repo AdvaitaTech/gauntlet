@@ -1,9 +1,9 @@
 import esbuild from 'esbuild';
 import { BuildError } from '../error';
-import type { PopulatedRun } from '$lib/models/runs';
 import { chromium } from 'playwright';
 import type { Challenge } from '$lib/models/challenges';
 import { expect } from 'playwright/test';
+import * as importMap from 'esbuild-plugin-import-map';
 
 export const LANGUAGES = ['typescript', 'javascript'] as const;
 export const ENVIRONMENTS = ['react'] as const;
@@ -19,6 +19,13 @@ export const buildFrontend = async ({
 	environment: (typeof ENVIRONMENTS)[number];
 	language: (typeof LANGUAGES)[number];
 }) => {
+	importMap.load({
+		imports: {
+			react: 'https://esm.sh/react@18.2.0',
+			'react-dom/client': 'https://esm.sh/react-dom@18.2.0?cjs-exports=createRoot,hydrateRoot',
+			'react/jsx-runtime': 'https://esm.sh/jsx-runtime@1.2.0?cjs-exports=jsx'
+		}
+	});
 	const js = await esbuild.build({
 		stdin: {
 			contents: content,
@@ -26,9 +33,11 @@ export const buildFrontend = async ({
 			sourcefile: 'main.js',
 			loader: 'jsx'
 		},
-		bundle: false,
+		bundle: true,
 		minify: true,
+		format: 'esm',
 		jsx: 'transform',
+		plugins: [importMap.plugin()],
 		write: false
 	});
 
@@ -42,15 +51,6 @@ export const buildFrontend = async ({
       </head>
       <body>
         <div id="root"></div>
-        <script type="importmap">
-          {
-            "imports": {
-              "react": "https://esm.sh/react@18.2.0",
-              "react-dom/client": "https://esm.sh/react-dom@18.2.0?cjs-exports=createRoot,hydrateRoot",
-              "react/jsx-runtime": "https://esm.sh/jsx-runtime@1.2.0?cjs-exports=jsx"
-            }
-          }
-        </script>
         <script type="module">${str}</script>
       </body>
     </html>`;

@@ -397,6 +397,7 @@ createRoot(document.getElementById("root")).render(<Component />);
 				},
 				body: JSON.stringify({
 					content: code,
+					styles,
 					language: 'javascript',
 					environment: 'react'
 				}),

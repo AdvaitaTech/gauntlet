@@ -72,6 +72,7 @@ export default {
 				}
 			},
 			fontSize: {
+				'4xl': '60px',
 				'3xl': '50px',
 				'2xl': '30px',
 				xl: '25px',

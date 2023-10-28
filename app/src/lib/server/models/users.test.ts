@@ -1,4 +1,4 @@
-import { getConnection } from '$lib/db';
+import { getConnection } from '$lib/server/db';
 import type { PoolClient } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { authenticateUser, createUser, fetchUser, updateUser } from './users';

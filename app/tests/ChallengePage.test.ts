@@ -43,7 +43,7 @@ test('should preview the code and close previewer', async ({ page }) => {
 	await expect(page.frameLocator('#preview-frame').locator('body')).not.toBeVisible();
 });
 
-test.only('should submit successful challenge run', async ({ page }) => {
+test('should submit successful challenge run', async ({ page }) => {
 	await page.waitForTimeout(1000);
 	await page.locator('#code-editor .view-lines').click();
 	await page.locator('#code-editor .view-lines').press('Meta+a');

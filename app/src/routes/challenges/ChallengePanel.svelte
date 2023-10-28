@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Challenge } from '$lib/models/challenges';
-	import type { PopulatedRun } from '$lib/models/runs';
+	import type { Challenge } from '$lib/server/models/challenges';
+	import type { PopulatedRun } from '$lib/server/models/runs';
 	import ChallengeDescription from './ChallengeDescription.svelte';
 	import SubmissionsTab from './SubmissionsTab.svelte';
 	const tabs = [

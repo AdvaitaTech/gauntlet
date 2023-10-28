@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { AppError, AuthError, BadDataError, ValidationError } from '$lib/error';
-import { authenticateUser, createUser } from '$lib/models/users';
+import { authenticateUser, createUser } from '$lib/server/models/users';
 import { redirect, type Actions } from '@sveltejs/kit';
 import { z } from 'zod';
 

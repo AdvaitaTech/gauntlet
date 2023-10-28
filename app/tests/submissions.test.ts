@@ -1,8 +1,8 @@
 import type { PoolClient } from 'pg';
-import type { PopulatedRun } from '../src/lib/models/runs';
+import type { PopulatedRun } from '../src/lib/server/models/runs';
 import test, { expect } from '@playwright/test';
-import { getConnection } from '../src/lib/db';
-import { createChallenge, type Challenge } from '../src/lib/models/challenges';
+import { getConnection } from '../src/lib/server/db';
+import { createChallenge, type Challenge } from '../src/lib/server/models/challenges';
 
 let challengeId: Challenge;
 let poolClient: PoolClient;

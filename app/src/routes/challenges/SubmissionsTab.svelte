@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PopulatedRun } from '$lib/models/runs';
+	import type { PopulatedRun } from '$lib/server/models/runs';
 
 	export let runs: PopulatedRun[];
 	const getRunStatus = (run: PopulatedRun) => {

@@ -1,5 +1,5 @@
 import { getParameterizedQuery } from '../db';
-import { ValidationError } from '../error';
+import { ValidationError } from '../../error';
 import type { PoolClient } from 'pg';
 import { z } from 'zod';
 

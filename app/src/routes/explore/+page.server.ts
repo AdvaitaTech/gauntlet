@@ -1,4 +1,4 @@
-import { filterChallenges } from '$lib/models/challenges';
+import { filterChallenges } from '$lib/server/models/challenges';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {

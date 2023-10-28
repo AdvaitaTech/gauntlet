@@ -1,7 +1,7 @@
 import esbuild from 'esbuild';
 import { BuildError } from '../error';
 import { chromium } from 'playwright';
-import type { Challenge } from '$lib/models/challenges';
+import type { Challenge } from '$lib/server/models/challenges';
 import { expect } from 'playwright/test';
 import * as importMap from 'esbuild-plugin-import-map';
 
@@ -78,7 +78,9 @@ export const executeFrontendRun = async (
 ): Promise<FrontendRunStatus> => {
 	try {
 		const testStatuses: TestRunStatus[] = [];
-		const browser = await chromium.launch();
+		const browser = await chromium.launch({
+			headless: true
+		});
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		await page.setContent(index);

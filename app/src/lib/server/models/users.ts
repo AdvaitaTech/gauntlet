@@ -1,7 +1,7 @@
 import type { PoolClient } from 'pg';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
-import { BadDataError, ValidationError } from '../error';
+import { BadDataError, ValidationError } from '../../error';
 import { getParameterizedQuery } from '../db';
 
 export type User = {

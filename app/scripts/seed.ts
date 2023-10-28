@@ -10,5 +10,5 @@ main()
 		console.log('seed successful');
 	})
 	.catch((e) => {
-		console.log('caught error during seed');
+		console.log('caught error during seed', e);
 	});

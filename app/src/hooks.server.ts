@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { getConnection } from '$lib/db';
+import { getConnection } from '$lib/server/db';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {

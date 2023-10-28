@@ -452,7 +452,7 @@ createRoot(document.getElementById("root")).render(<Component />);
 		Environment: React
 	</button>
 	<button class="mr-4 px-[7px] py-[1px] text-sm bg-primary-900 rounded-lg">
-		Language: Typescript
+		Language: Javascript
 	</button>
 	<button id="preview-code" class="text-[40px] text-primary-600 mr-2" on:click={previewCode}>
 		<PlayFill height="1em" width="1em" />

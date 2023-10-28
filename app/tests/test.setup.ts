@@ -1,6 +1,7 @@
-import { createChallenge } from '../src/lib/models/challenges';
-import { getConnection } from '../src/lib/db';
-import { createUser } from '../src/lib/models/users';
+import { createChallenge } from '../src/lib/server/models/challenges';
+import { getConnection } from '../src/lib/server/db';
+import todoList from './fixtures/challenges/todo-list';
+import { createUser } from '../src/lib/server/models/users';
 
 console.log('running test setup');
 export async function setup() {
@@ -16,13 +17,11 @@ export async function setup() {
 			})
 		)
 	);
-	const challenges = new Array(5).fill(0);
-	await Promise.all(
-		challenges.map((_, i) =>
-			createChallenge(poolClient, {
-				title: `Simple Counter ${i + 1}`,
-				slug: `simple-counter-${i + 1}`,
-				body: `
+	const challenges = [
+		{
+			title: `Simple Counter 1`,
+			slug: `simple-counter-1`,
+			body: `
         <p>Build a webpage that displays a count value starting at 0. Provide 3 buttons in a row
 					underneath that say <code>Increment</code>, <code>Decrement</code> and
 					<code>Reset</code>. </p>
@@ -34,36 +33,38 @@ export async function setup() {
           <p>When <code>Reset</code> is clicked, the value should
 					go back to 0</p>
         `,
-				level: ['Easy', 'Medium', 'Hard'][i % 3],
-				tests: [
-					{
-						title: 'It should start counter at 0',
-						body: `async ({page, expect}) => {
+			level: 'Easy',
+			tests: [
+				{
+					title: 'It should start counter at 0',
+					body: `async ({page, expect}) => {
         await expect(page.getByText('0')).toBeVisible();
       }`
-					},
-					{
-						title: 'It should increment counter',
-						body: `async ({page, expect}) => {
+				},
+				{
+					title: 'It should increment counter',
+					body: `async ({page, expect}) => {
         await page.getByText('Increment').click({
           timeout: 1000
         });
         await expect(page.getByText('1')).toBeVisible();
       }`
-					},
-					{
-						title: 'It should decrement counter',
-						body: `async ({page, expect}) => {
+				},
+				{
+					title: 'It should decrement counter',
+					body: `async ({page, expect}) => {
         await page.getByText('Decrement').click({
           timeout: 1000
         });
         await expect(page.getByText('0')).toBeVisible();
       }`
-					}
-				]
-			})
-		)
-	);
+				}
+			]
+		},
+		todoList
+	];
+
+	await Promise.all(challenges.map((challenge, i) => createChallenge(poolClient, challenge)));
 	poolClient.release();
 }
 

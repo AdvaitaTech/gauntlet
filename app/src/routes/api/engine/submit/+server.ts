@@ -1,6 +1,6 @@
 import { AppError, BadDataError, ForbiddenError } from '$lib/error';
-import { fetchChallenge } from '$lib/models/challenges';
-import { createRun } from '$lib/models/runs';
+import { fetchChallenge } from '$lib/server/models/challenges';
+import { createRun } from '$lib/server/models/runs';
 import { buildFrontend, executeFrontendRun } from '$lib/server/engine';
 import type { RequestHandler } from '@sveltejs/kit';
 import { z } from 'zod';

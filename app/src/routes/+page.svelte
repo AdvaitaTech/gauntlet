@@ -1,3 +1,12 @@
+<svelte:head>
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="Gauntlet" />
+	<meta
+		property="og:description"
+		content="Gauntlet is a place for web developers to hone their craft"
+	/>
+	<meta property="og:url" content="gauntlet.advaita.co" />
+</svelte:head>
 <div class="px-20 py-10 bg-background-800 text-white-0">
 	<div class="flex flex-col items-center">
 		<h1 class="text-4xl text-center mt-[150px]">

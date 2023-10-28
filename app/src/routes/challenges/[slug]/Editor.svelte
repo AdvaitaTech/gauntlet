@@ -359,9 +359,13 @@ createRoot(document.getElementById("root")).render(<Component />);
 		});
 
 		codeModel =
-			codeModel || monaco.editor.createModel(code, 'typescript', monaco.Uri.file('/main.jsx'));
+			monaco.editor.getModel(monaco.Uri.file('/main.jsx')) ||
+			monaco.editor.createModel(code, 'typescript', monaco.Uri.file('/main.jsx'));
+		codeModel.setValue(code);
 		stylesModel =
-			stylesModel || monaco.editor.createModel(styles, 'css', monaco.Uri.file('/styles.css'));
+			monaco.editor.getModel(monaco.Uri.file('/styles.css')) ||
+			monaco.editor.createModel(styles, 'css', monaco.Uri.file('/styles.css'));
+		stylesModel.setValue(styles);
 
 		editorElement = monaco.editor.create(editorRef, {
 			model: codeModel,

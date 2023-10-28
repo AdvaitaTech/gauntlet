@@ -7,8 +7,8 @@ test.beforeEach(async ({ page }) => {
 	await page.getByLabel('Password').fill('testing@123');
 	await page.locator('button[type="submit"]').click();
 	await expect(page).toHaveURL('/explore');
-	await page.locator('a[href="/challenges/simple-counter-1"]').click();
-	await expect(page).toHaveURL('/challenges/simple-counter-1');
+	await page.locator('a[href="/challenges/simple-counter"]').click();
+	await expect(page).toHaveURL('/challenges/simple-counter');
 });
 
 test('should show the challenges page with code and styles', async ({ page }) => {

@@ -19,8 +19,8 @@ export async function setup() {
 	);
 	const challenges = [
 		{
-			title: `Simple Counter 1`,
-			slug: `simple-counter-1`,
+			title: `Simple Counter`,
+			slug: `simple-counter`,
 			body: `
         <p>Build a webpage that displays a count value starting at 0. Provide 3 buttons in a row
 					underneath that say <code>Increment</code>, <code>Decrement</code> and

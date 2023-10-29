@@ -2,6 +2,7 @@ import { createChallenge } from '../src/lib/server/models/challenges';
 import { getConnection } from '../src/lib/server/db';
 import todoList from './fixtures/challenges/todo-list';
 import { createUser } from '../src/lib/server/models/users';
+import autosizeTextarea from './fixtures/challenges/autosize-textarea';
 
 console.log('running test setup');
 export async function setup() {
@@ -61,7 +62,8 @@ export async function setup() {
 				}
 			]
 		},
-		todoList
+		todoList,
+		autosizeTextarea
 	];
 
 	await Promise.all(challenges.map((challenge, i) => createChallenge(poolClient, challenge)));
